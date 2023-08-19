@@ -10,7 +10,7 @@ jobs:
 
       - name: build docker image
         working-directory: builder
-        run: docker build . builder:latest
+        run: docker build . --tag builder:latest
 
       - name: run docker image
         working-directory: builder
