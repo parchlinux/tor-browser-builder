@@ -10,13 +10,13 @@ jobs:
 
       - name: build docker image
         working-directory: builder
-        run: docker build . --file Dockerfile builder:latest
+        run: docker build . --tag builder:latest
 
       - name: run docker image
         working-directory: builder
         run: |
           docker run -i \
-          -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }}
-          -e REPO=${{ github.repository }}
-          -e PKG_NAME="tor-browser"
+          -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} \
+          -e REPO=${{ github.repository }} \
+          -e PKG_NAME="tor-browser" \
           builder:latest
