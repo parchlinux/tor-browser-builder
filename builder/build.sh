@@ -5,13 +5,13 @@ main() {
 	repo=$(printenv REPO)
 	github_key=$(printenv GITHUB_KEY)
 	pkg_name=$(printenv PKG_NAME)
-	source_path="/home/builder/source"
+	source_path="$HOME/source"
 	prepare_source "https://aur.archlinux.org/$pkg_name.git" "$source_path"
-	build "$source_path" ""
+	build "$source_path"
 	version=$(generate_version "$source_path/PKGBUILD")
 	github_login "$github_key"
 	github_check_same_version "$version" "$repo"
-	github_create_release "$version" "$source_path/*.pkg.tar.zst" "$repo"
+	github_create_release "$version" "$source_path" "$repo"
 }
 prepare_source() {
 	local repo=$1
@@ -30,15 +30,16 @@ build() {
 }
 generate_version() {
 	local PKGBUILD_path=$1
-	local minor major pkgrel
+	local pkgver pkgrel
 	PKGBUILD_get_value() {
 		local key=$1
-		grep "$key" "$PKGBUILD_path" | head -1 | cut -d '=' -f2
+		local value
+		value=$(grep "$key" "$PKGBUILD_path" | head -1 | cut -d '=' -f2)
+		echo "$value"
 	}
-	minor=$(PKGBUILD_get_value "_minor" "$PKGBUILD_path")
-	major=$(PKGBUILD_get_value "_major" "$PKGBUILD_path")
-	pkgrel=$(PKGBUILD_get_value "pkgrel" "$PKGBUILD_path")
-	echo "$major.$minor-$pkgrel"
+	pkgver=$(PKGBUILD_get_value "pkgver" | xargs)
+	pkgrel=$(PKGBUILD_get_value "pkgrel")
+	echo "$pkgver-$pkgrel"
 }
 github_login() {
 	local github_key=$1
@@ -46,9 +47,12 @@ github_login() {
 }
 github_create_release() {
 	local tag=$1
-	local assests_path=$2
+	local assests_directory=$2
 	local repo=$3
-	gh release create "$tag" "$assests_path" --repo "$repo"
+	local assests_paths
+	cd "$assests_directory" || exit 1
+	assests_paths=$(find . -maxdepth 1 -type f -name "*.pkg.tar.zst" | tr '\n' ' ' | xargs)
+	gh release create --repo "$repo" "$tag" "$assests_paths"
 }
 github_check_same_version() {
 	local tag=$1
