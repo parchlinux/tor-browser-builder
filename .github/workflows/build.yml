@@ -16,7 +16,7 @@ jobs:
         working-directory: builder
         run: |
           docker run -i \
-          -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }}
-          -e REPO=${{ github.repository }}
-          -e PKG_NAME="tor-browser"
+          -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} \
+          -e REPO=${{ github.repository }} \
+          -e PKG_NAME="tor-browser" \
           builder:latest
