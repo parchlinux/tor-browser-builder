@@ -21,7 +21,11 @@ build() {
 	local source_path=$1
 	local enviroment_vars=$2
 	cd "$source_path" || exit 1
-	/bin/env "$enviroment_vars" makepkg -sc --noconfirm --noprogressbar
+	if [[ -z "$enviroment_vars" ]]; then
+		makepkg -sc --noconfirm --noprogressbar
+	else
+		env "$enviroment_vars" makepkg -sc --noconfirm --noprogressbar
+	fi
 }
 generate_version() {
 	local PKGBUILD_path=$1
