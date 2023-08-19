@@ -1,11 +1,12 @@
 #!/bin/bash
 main() {
+	set_errexit "on"
 	local repo source_path version github_key pkg_name
 	repo=$(printenv REPO)
 	github_key=$(printenv GITHUB_KEY)
 	pkg_name=$(printenv PKG_NAME)
 	source_path="/home/builder/source"
-	prepare_source "https://github.com/$repo/$pkg_name" "$source_path"
+	prepare_source "https://aur.archlinux.org/$pkg_name.git" "$source_path"
 	build "$source_path" ""
 	version=$(generate_version "$source_path/PKGBUILD")
 	github_login "$github_key"
@@ -20,7 +21,7 @@ build() {
 	local source_path=$1
 	local enviroment_vars=$2
 	cd "$source_path" || exit 1
-	env "$enviroment_vars" makepkg -sc --noconfirm --noprogressbar
+	/bin/env "$enviroment_vars" makepkg -sc --noconfirm --noprogressbar
 }
 generate_version() {
 	local PKGBUILD_path=$1
