@@ -11,6 +11,7 @@ main() {
 	version=$(generate_version "$source_path/PKGBUILD")
 	github_login "$github_key"
 	github_check_same_version "$version" "$repo"
+	github_create_release "$version" "$source_path/*.pkg.tar.zst" "$repo"
 }
 prepare_source() {
 	local repo=$1
