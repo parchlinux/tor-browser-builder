@@ -1,3 +1,0 @@
-[submodule "tor-browser"]
-	path = tor-browser
-	url = https://aur.archlinux.org/tor-browser
