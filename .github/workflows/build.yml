@@ -22,11 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: build docker image
+      - name: Build the package builder docker image
         working-directory: builder
         run: docker build . --tag builder:latest
 
-      - name: run docker image
+      - name: Run the package builder docker image
         working-directory: builder
         run: |
           docker run -i \
