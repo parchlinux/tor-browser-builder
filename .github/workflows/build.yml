@@ -1,5 +1,19 @@
 name: build arch package
-on: [workflow_call, workflow_dispatch]
+on:
+  workflow_call:
+    inputs:
+      package-name:
+        description: 'AUR package to build'
+        required: true
+        type: string
+          
+  workflow_dispatch:
+    inputs:
+      package-name:
+        description: 'AUR package to build'
+        required: true
+        type: string
+
 
 jobs:
   build:
@@ -18,5 +32,5 @@ jobs:
           docker run -i \
           -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} \
           -e REPO=${{ github.repository }} \
-          -e PKG_NAME="tor-browser" \
+          -e PKG_NAME=${{ inputs.package-name }} \
           builder:latest
