@@ -1,0 +1,70 @@
+name: Check for new AUR update
+on:
+  workflow_dispatch:
+
+  # schedule:
+  #   - cron: '40 7,15,23 */ * *'
+
+jobs:
+  check-new-commit:
+    name: Check for new commit in AUR
+
+    runs-on: ubuntu-latest
+
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PACKAGE_NAME: "tor-browser"
+
+    permissions:
+      contents: write
+
+    outputs:
+      new-update: ${{ steps.compare-commits.outputs.new-update }}
+
+    steps:
+      - uses: actions/checkout@v3.1.0
+
+      - name: Config git for commit
+        run: |
+          git config user.name "Check update workflow[bot]"
+          git config user.email ""
+
+      - name: Get the last commit ID from AUR
+        run: |
+          git clone https://aur.archlinux.org/${{ env.PACKAGE_NAME }}.git
+          commit_id=$(git -C ./${{ env.PACKAGE_NAME }} rev-parse HEAD | xargs)
+          echo "LATEST_AUR_COMMIT=$commit_id" >> "$GITHUB_ENV"
+
+      - name: Check for last_commit file exists
+        run: |
+          if [[ -f ./last_commit ]]; then
+            echo "FILE_EXISTS=true" >> "$GITHUB_ENV"
+          else
+            echo "FILE_EXISTS=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Create last_commit file
+        if: env.FILE_EXISTS == 'false'
+        run: |
+          echo $LATEST_AUR_COMMIT > ./last_commit
+          git add ./last_commit
+          git commit -m "add: last_commit file"
+          git push
+
+      - name: Compare commit ids
+        id: compare-commits
+        if: env.FILE_EXISTS == 'true'
+        run: |
+          latest_local_commit=$(cat ./last_commit)
+          if [[ "$LATEST_AUR_COMMIT" != "$latest_local_commit" ]]; then
+            echo "New update available"
+            echo "new-update=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  call-build-workflow:
+    name: Call the build workflow
+    needs: check-new-commit
+    if: ${{ needs.check-new-commit.outputs.new-update == 'true' }}
+    uses: ./.github/workflows/build.yml
+    with:
+      package-name: ${{ needs.check-new-commit.env.PACKAGE_NAME }}
