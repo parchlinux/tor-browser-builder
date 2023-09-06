@@ -1,4 +1,4 @@
-name: build arch package
+name: Build arch package
 on:
   workflow_call:
     inputs:
