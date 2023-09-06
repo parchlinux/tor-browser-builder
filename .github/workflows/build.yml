@@ -1,4 +1,4 @@
-name: Build arch package
+name: Build pacman package
 on:
   workflow_call:
     inputs:
@@ -14,9 +14,8 @@ on:
         required: true
         type: string
 
-
 jobs:
-  build:
+  main:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +29,7 @@ jobs:
         working-directory: builder
         run: |
           docker run -i \
-          -e GITHUB_KEY=${{ secrets.GITHUB_TOKEN }} \
+          -e GITHUB_KEY=${{ github.token }} \
           -e REPO=${{ github.repository }} \
           -e PKG_NAME=${{ inputs.package-name }} \
           builder:latest
