@@ -13,7 +13,6 @@ jobs:
 
     env:
       GH_TOKEN: ${{ github.token }}
-      PACKAGE_NAME: "tor-browser"
 
     permissions:
       contents: write
@@ -31,8 +30,8 @@ jobs:
 
       - name: Get the last commit ID from AUR
         run: |
-          git clone https://aur.archlinux.org/${{ env.PACKAGE_NAME }}.git
-          commit_id=$(git -C ./${{ env.PACKAGE_NAME }} rev-parse HEAD | xargs)
+          git clone https://aur.archlinux.org/${{ vars.PACKAGE_NAME }}.git
+          commit_id=$(git -C ./${{ vars.PACKAGE_NAME }} rev-parse HEAD | xargs)
           echo "LATEST_AUR_COMMIT=$commit_id" >> "$GITHUB_ENV"
 
       - name: Check for last_commit file exists
@@ -66,5 +65,3 @@ jobs:
     needs: check-new-commit
     if: ${{ needs.check-new-commit.outputs.new-update == 'true' }}
     uses: ./.github/workflows/build.yml
-    with:
-      package-name: ${{ needs.check-new-commit.env.PACKAGE_NAME }}
