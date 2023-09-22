@@ -57,6 +57,10 @@ jobs:
           latest_local_commit=$(cat ./last_commit)
           if [[ "$LATEST_AUR_COMMIT" != "$latest_local_commit" ]]; then
             echo "New update available"
+            echo "$LATEST_AUR_COMMIT" > ./last_commit
+            git add ./last_commit
+            git commit -m "update: last_commit file"
+            git push
             echo "new-update=true" >> "$GITHUB_OUTPUT"
           fi
 
