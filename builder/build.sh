@@ -1,6 +1,7 @@
 #!/bin/bash
 main() {
 	set -e
+	set -x
 	local repo source_path version github_key pkg_name makepkg_env_vars
 	repo=$(printenv REPO)
 	github_key=$(printenv GITHUB_KEY)
