@@ -23,6 +23,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
 
+      - name: Check for PACKAGE_NAME variable exists
+        if: ${{ vars.PACKAGE_NAME == '' }}
+        run: |
+          echo "error: PACKAGE_NAME is not declared in reposirory's variables."
+          exit 1
+
       - name: Config git for commit
         run: |
           git config user.name "Check update workflow[bot]"

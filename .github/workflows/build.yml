@@ -8,6 +8,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Check for PACKAGE_NAME variable exists
+        if: ${{ vars.PACKAGE_NAME == '' }}
+        run: |
+          echo "error: PACKAGE_NAME is not declared in reposirory's variables."
+          exit 1
+
       - name: Build the package builder docker image
         working-directory: builder
         run: docker build . --tag builder:latest
