@@ -25,5 +25,5 @@ jobs:
           -e GITHUB_KEY=${{ github.token }} \
           -e REPO=${{ github.repository }} \
           -e PKG_NAME=${{ vars.PACKAGE_NAME }} \
-          -e MAKEPKG_ENV_VARS=${{ vars.MAKEPKG_ENV_VARS }} \
+          -e MAKEPKG_ENV_VARS="${{ vars.MAKEPKG_ENV_VARS }}" \
           builder:latest
