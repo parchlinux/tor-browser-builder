@@ -6,6 +6,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      - if: ${{ vars.PACKAGE_NAME == '' }}
+        run: |
+          echo "error: PACKAGE_NAME is not declared in reposirory's variables."
+          exit 1
+
       - uses: actions/checkout@v3
 
       - name: Build the package builder docker image
@@ -19,4 +25,5 @@ jobs:
           -e GITHUB_KEY=${{ github.token }} \
           -e REPO=${{ github.repository }} \
           -e PKG_NAME=${{ vars.PACKAGE_NAME }} \
+          -e MAKEPKG_ENV_VARS="${{ vars.MAKEPKG_ENV_VARS }}" \
           builder:latest

@@ -1,13 +1,14 @@
 #!/bin/bash
 main() {
 	set -e
-	local repo source_path version github_key pkg_name
+	local repo source_path version github_key pkg_name makepkg_env_vars
 	repo=$(printenv REPO)
 	github_key=$(printenv GITHUB_KEY)
 	pkg_name=$(printenv PKG_NAME)
 	source_path="$HOME/source"
+	makepkg_env_vars=$(printenv MAKEPKG_ENV_VARS)
 	prepare_source "https://aur.archlinux.org/$pkg_name.git" "$source_path"
-	build "$source_path"
+	build "$source_path" "$makepkg_env_vars"
 	version=$(generate_version "$source_path/PKGBUILD")
 	github_login "$github_key"
 	github_check_same_version "$version" "$repo"
