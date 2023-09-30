@@ -21,6 +21,12 @@ jobs:
       new-update: ${{ steps.compare-commits.outputs.new-update }}
 
     steps:
+
+      - if: ${{ vars.PACKAGE_NAME == '' }}
+        run: |
+          echo "error: PACKAGE_NAME is not declared in reposirory's variables."
+          exit 1
+
       - uses: actions/checkout@v3.1.0
 
       - name: Config git for commit
